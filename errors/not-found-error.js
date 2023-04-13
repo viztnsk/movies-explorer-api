@@ -1,10 +1,10 @@
-const { NOT_FOUND } = require('../utils/constants');
+const { NOT_FOUND, NotFoundMessage } = require('../utils/constants');
 
 class NotFoundError extends Error {
   constructor(message) {
     super(message);
     this.statusCode = NOT_FOUND;
-    this.message = 'Результат не найден';
+    this.message = NotFoundMessage;
   }
 }
 

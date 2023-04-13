@@ -4,7 +4,7 @@ const BadRequestError = require('../errors/bad-request-error');
 const ForbiddenError = require('../errors/forbidden-error');
 
 const getMovies = (req, res, next) => {
-  Movie.find({}).populate('owner')
+  Movie.find({ owner: req.user._id })
     .then((movies) => res.send(movies))
     .catch(next);
 };
@@ -34,6 +34,9 @@ const deleteMovie = (req, res, next) => {
       const cardOwner = movie.owner._id.toString();
       if (currentUser === cardOwner) {
         Movie.findByIdAndRemove(req.params._id)
+          .orFail(() => {
+            throw new NotFoundError();
+          })
           .then((deletedMovie) => {
             res.send(deletedMovie);
           });

@@ -5,7 +5,7 @@ const { userResFormat } = require('../utils/utils');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error');
 const ConflictError = require('../errors/conflict-error');
-const { NODE_ENV, JWT_SECRET } = require('../config');
+const { JWT_SECRET } = require('../config');
 
 const getUser = (req, res, next) => {
   User.findById(req.user._id)
@@ -25,8 +25,8 @@ const getUser = (req, res, next) => {
 };
 
 const patchUser = (req, res, next) => {
-  const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+  const { name, email } = req.body;
+  User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
     .orFail(() => {
       throw new NotFoundError();
     })
@@ -34,7 +34,9 @@ const patchUser = (req, res, next) => {
       res.send(userResFormat(user));
     })
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.code === 11000) {
+        next(new ConflictError());
+      } else if (err.name === 'CastError' || err.name === 'ValidationError') {
         next(new BadRequestError());
       } else {
         next(err);
@@ -67,13 +69,17 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user.id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
+        JWT_SECRET,
         { expiresIn: '7d' },
       );
       res.send({ token });
     })
     .catch((err) => {
-      next(err);
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
+        next(new BadRequestError());
+      } else {
+        next(err);
+      }
     });
 };
 
