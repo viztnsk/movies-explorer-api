@@ -19,13 +19,12 @@ const app = express();
 mongoose.set('strictQuery', false);
 mongoose.connect(DB_ADDRESS);
 
-app.use(cors('*'));
+app.use(requestLogger);
+app.use(limiter);
+app.use('*', cors());
 app.use(helmet());
-app.use(limiter());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-app.use(requestLogger);
 
 app.post('/signin', loginValidation, login);
 app.post('/signup', registerValidation, createUser);
