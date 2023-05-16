@@ -1,8 +1,8 @@
 const allowedCors = [
-  'http://viztnsk.movies.nomoredomains.monster/',
-  'https://viztnsk.movies.nomoredomains.monster/',
-  'http://api.viztnsk.movies.nomoredomains.monster/',
-  'https://api.viztnsk.movies.nomoredomains.monster/',
+  'http://viztnsk.movies.nomoredomains.monster',
+  'https://viztnsk.movies.nomoredomains.monster',
+  'http://api.viztnsk.movies.nomoredomains.monster',
+  'https://api.viztnsk.movies.nomoredomains.monster',
   'http://localhost:3000',
   'https://localhost:3000',
   'http://localhost:3001',
